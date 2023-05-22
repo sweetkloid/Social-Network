@@ -1,5 +1,6 @@
+//require mongoose 
 const { Schema } = require('mongoose');
-
+//creating schema user
 const userSchema = new Schema(
   {
     username: {
@@ -36,5 +37,9 @@ const userSchema = new Schema(
     id: false,
   }
 );
+
+userSchema.virtual('friendCount').get(function () {
+  return this.friends.length;
+});
 
 module.exports = userSchema;
