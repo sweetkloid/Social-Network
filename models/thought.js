@@ -1,5 +1,37 @@
 const { Schema } = require('mongoose');
+//creating subdocument schema
+const reactionSchema= new Schema(
+  {
+    reactionId:{
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId(),
+    }
+  },
+  {
+    reactionBody:{
+      type: String,
+      required: true,
+      maxlength: 280,
+    }
+  },
+  {
+    username:{
+      type: String,
+      required: true,
+    }
+  },
+  {
+    createdAt:{
+      type: Date,
+      default: Date.now,
+      get: function (createdAt) {
+        return createdAt.toLocaleString();
+        }
+      }
+    },
 
+)
+//creating thought schema
 const thoughtSchema = new Schema(
   {
     thoughtText:{
@@ -25,8 +57,9 @@ const thoughtSchema = new Schema(
   }
 },
 {
-  reaction:{
-    type: reactionSchema,
+  //embed subdocument schema
+  reactions:{
+    type: [reactionSchema],
   }
 },
   {
@@ -37,37 +70,6 @@ const thoughtSchema = new Schema(
   }
 )
 
-const reactionSchema= new Schema(
-  {
-    reactionId:{
-      type: Schema.Types.ObjectId,
-      default: () => new Types.ObjectId(),
-    }
-  },
-  {
-    reactionBody:{
-      type: String,
-      required: true,
-      maxlength: 280,
-    }
-  },
-  {
-    username:{
-      type: StaticRange,
-      required: true,
-    }
-  },
-  {
-    createdAt:{
-      type: Date,
-      default: Date.now,
-      get: function (createdAt) {
-        return createdAt.toLocaleString();
-        }
-      }
-    },
-
-)
 
 thoughtSchema.virtual('reactionCount').get(function () {
   return this.reaction.length;
