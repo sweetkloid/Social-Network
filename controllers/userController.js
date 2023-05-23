@@ -4,8 +4,7 @@ module.exports = {
   // Get all users
   async getUsers(req, res) {
     try {
-      const users = await User.find()
-      .populate({path: 'thought', select:'-_v'});
+      const users = await User.find();
       res.json(users);
     } catch (err) {
       console.log(err);
@@ -67,4 +66,34 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+  async addFriend(req, res) {
+    const { userId, friendId } = req.params;
+  
+    try {
+      // Find the user
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Find the friend
+      const friend = await User.findById(friendId);
+  
+      if (!friend) {
+        return res.status(404).json({ message: 'Friend not found' });
+      }
+  
+      // Add the friend's ID to the user's friends array
+      user.friends.push(friendId);
+  
+      // Save the user with the updated friends array
+      await user.save();
+  
+      res.json({ message: 'Friend added successfully' });
+    } catch (err) {
+      res.status(500).json({ message: 'Error adding friend', error: err.message });
+    }
+  }
+  
 }
