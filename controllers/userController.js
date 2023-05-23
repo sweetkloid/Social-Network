@@ -94,6 +94,27 @@ module.exports = {
     } catch (err) {
       res.status(500).json({ message: 'Error adding friend', error: err.message });
     }
-  }
+  },
+  async deleteFriend(req, res) {
+    const { userId, friendId } = req.params;
   
+    try {
+      // Find the user
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Remove the friend from the user's friend list
+      user.friends.pull(friendId);
+  
+      // Save the updated user
+      await user.save();
+  
+      res.json({ message: 'Friend removed successfully' });
+    } catch (err) {
+      res.status(500).json({ message: 'Error removing friend', error: err.message });
+    }
+  }  
 }
